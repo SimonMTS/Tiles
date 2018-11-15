@@ -1,28 +1,37 @@
 package application;
 
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 
 public class GameController {
 	
-	private Scene scene;
+	@FXML
+	private GridPane Board;
 	
 	@FXML
 	private Rectangle Rectangle1;
 	
 	@FXML
-	private void Rectangle1Handle( MouseEvent event ) {
-		System.out.println("onDragDetected");
+	private void onDragDetected( MouseEvent event ) {
+//		System.out.println("onDragDetected");
 		
         Dragboard db = Rectangle1.startDragAndDrop(TransferMode.MOVE);
+        
+        Rectangle1.setWidth(35);
+		Rectangle1.setHeight(35);
+        
+        db.setDragView(Rectangle1.snapshot(null, null));
+        Rectangle1.setWidth(0);
+		Rectangle1.setHeight(0);
 
         ClipboardContent content = new ClipboardContent();
         content.putString(Rectangle1.getId());
@@ -33,7 +42,7 @@ public class GameController {
 	
 	@FXML
 	private void onDragOver( DragEvent event ) {
-		System.out.println("onDragOver");
+//		System.out.println("onDragOver");
 
 		if (
 			event.getGestureSource() != null &&
@@ -47,34 +56,32 @@ public class GameController {
 	
 	@FXML
 	private void onDragDropped( DragEvent event ) {
-		System.out.println("onDragDropped");
+//		System.out.println("onDragDropped");
 
-		//Get the dragboard back
 	    Dragboard db = event.getDragboard();
 	    boolean success = false;
-	    //Could have some more thorough checks of course.
+
 	    if (db.hasString()) {
-	        //Get the textarea and place it into flowPane2 instead
-	    	System.out.println( "as" );
-	    	
-//	    	StackPane sp = (StackPane) scene.lookup("#StackPanel1");
 	    	StackPane sp = (StackPane) event.getTarget();
-	    	
-	    	System.out.println( sp );
 	    	sp.getChildren().add(Rectangle1);
+	    	Rectangle1.setWidth(35);
+			Rectangle1.setHeight(35);
+	    	
+//	    	System.out.println( sp );
+	    	System.out.println( GridPane.getRowIndex(sp) +"-"+ GridPane.getColumnIndex(sp) );
 	        success = true;
 	    }
-	    //Complete and consume the event.
+
 	    event.setDropCompleted(success);
-	    event.consume();
-		
 	    event.consume();
 	}
 	
-	public void setScene( Scene scene ) {
-		
-		this.scene = scene;
-		
+	@FXML
+	private void onDragDone( DragEvent event ) {
+		if ( ((Node) event.getTarget()).getParent().getParent() != Board ) {
+			Rectangle1.setWidth(20);
+			Rectangle1.setHeight(20);
+		}
 	}
 	
 }
