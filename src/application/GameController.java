@@ -29,7 +29,7 @@ public class GameController {
         Rectangle1.setWidth(35);
 		Rectangle1.setHeight(35);
         
-        db.setDragView(Rectangle1.snapshot(null, null));
+        db.setDragView(Rectangle1.snapshot(null, null), 17.5, 17.5);
         Rectangle1.setWidth(0);
 		Rectangle1.setHeight(0);
 
