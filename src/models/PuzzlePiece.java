@@ -17,7 +17,7 @@ public class PuzzlePiece extends Rectangle {
 	private int PuzzleShapeY;
 	
 	public PuzzlePiece( GameController GameController, PuzzleShape ps, int Xpos, int Ypos, Color Color ) {
-		super(20, 20);
+		super(35, 35);
 		
 		PuzzleShape = ps;
 		PuzzleShapeX = Xpos;

@@ -26,31 +26,34 @@ public class GameController implements Initializable {
 	private GridPane Board;
 	
 	@FXML
-	private GridPane Dock;
+	private GridPane Dock1;
+
+	@FXML
+	private GridPane Dock2;
+
+	@FXML
+	private GridPane Dock3;
 	
 	public void initialize( URL arg0, ResourceBundle arg1 ) {
-//		System.out.println( Dock );
-//		Dock.add(new PuzzlePiece(this), 2, 1);
-//		Dock.add(new PuzzlePiece(this), 2, 2);
-//		Dock.add(new PuzzlePiece(this), 2, 3);
 		
-		new PuzzleShape( "x....x....x....x.........", 1, Dock, this );
-		new PuzzleShape( "x....xx..................", 2, Dock, this );
-		new PuzzleShape( "xxx..xxx..xxx............", 3, Dock, this );
+		new PuzzleShape( "x....x....x....x.........", Dock1, this );
+		new PuzzleShape( "x....xx..................", Dock2, this );
+//		new PuzzleShape( "xxx..xxx..xxx............", Dock3, this );
+		
+//		new PuzzleShape( "xxxxxxxxxxxxxxxxxxxxxxxxxx", Dock1, this );
+//		new PuzzleShape( "xxxxxxxxxxxxxxxxxxxxxxxxxx", Dock2, this );
+		new PuzzleShape( "xxxxxxxxxxxxxxxxxxxxxxxxxx", Dock3, this );
 		
 	}
 	
 	@FXML
 	public void onDragDetected( MouseEvent event ) {
-//		System.out.println("onDragDetected");
 
 		PuzzlePiece item = (PuzzlePiece) event.getSource();
 		
         Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
         
-        item.getShape().makeFullSize();
-        
-        db.setDragView(item.getShape().snapshot(), 17.5, 17.5);
+        db.setDragView(item.getShape().snapshot(), 17.5+(item.getXpos()*40), 17.5+(item.getYpos()*40));
         item.getShape().hide();
 
         ClipboardContent content = new ClipboardContent();
@@ -62,7 +65,6 @@ public class GameController implements Initializable {
 	
 	@FXML
 	private void onDragOver( DragEvent event ) {
-//		System.out.println("onDragOver");
 
 		if (
 			event.getGestureSource() != null &&
@@ -76,7 +78,6 @@ public class GameController implements Initializable {
 	
 	@FXML
 	private void onDragDropped( DragEvent event ) {
-//		System.out.println("onDragDropped");
 
 	    Dragboard db = event.getDragboard();
 	    boolean success = false;
@@ -87,9 +88,8 @@ public class GameController implements Initializable {
 	    	
 	    	sp.getChildren().add(item);
 	    	item.getShape().movePieces(event);
-	    	item.getShape().makeFullSize();
+	    	item.getShape().show();
 	    	
-//	    	System.out.println( sp );
 	    	System.out.println( GridPane.getRowIndex(sp) +"-"+ GridPane.getColumnIndex(sp) );
 	        success = true;
 	    }
@@ -104,7 +104,7 @@ public class GameController implements Initializable {
 			Dragboard db = event.getDragboard();
 			PuzzlePiece item = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+db.getString() );
 			
-			item.getShape().makeSmall();
+			item.getShape().show();
 		}
 	}
 	

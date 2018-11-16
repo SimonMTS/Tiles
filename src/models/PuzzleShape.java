@@ -12,12 +12,13 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 
 public class PuzzleShape {
 
 	private PuzzlePiece[][] PuzzlePieces = new PuzzlePiece[5][5];
 	
-	public PuzzleShape( String Placement, int Place, GridPane Dock, GameController GameController ) {
+	public PuzzleShape( String Placement, GridPane Dock, GameController GameController ) {
 		
 		Color Colr;
 		
@@ -68,21 +69,6 @@ public class PuzzleShape {
 				break;
 		}
 		
-		switch ( Place ) {
-			case 1:
-				Place = 0;
-				break;
-			case 2:
-				Place = 6;
-				break;
-			case 3:
-				Place = 13;
-				break;
-			default:
-				Place = 0;
-				break;
-		}
-		
 		int Cplacement = 0;
 		
 		for (int i = 0; i<5; i++) {
@@ -92,7 +78,7 @@ public class PuzzleShape {
 			    if ( c == 'x' ) {
 			    	PuzzlePieces[i][j] = new PuzzlePiece(GameController, this, j, i, Colr);
 			    	
-			    	Dock.add(PuzzlePieces[i][j], j+Place, i);
+			    	Dock.add(PuzzlePieces[i][j], j, i);
 			    }
 			    
 			    Cplacement++;
@@ -114,7 +100,7 @@ public class PuzzleShape {
 	    }
 	}
 	
-	public void makeFullSize() {
+	public void show() {
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
 	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
@@ -127,36 +113,20 @@ public class PuzzleShape {
 	    }
 	}
 	
-	public void makeSmall() {
-		for (int i=0; i<5; i++) {
-	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
-
-		        	PuzzlePieces[i][j].setWidth(20);
-		        	PuzzlePieces[i][j].setHeight(20);
-		        	
-	            }
-	        }
-	    }
-	}
-	
 	public void movePieces( DragEvent event ) {
 		GridPane Board = (GridPane) ((StackPane) event.getTarget()).getParent();
 		
     	PuzzlePiece DraggedItem = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+event.getDragboard().getString() );
     	int RowOfOriginallyDraggedItem = GridPane.getRowIndex(DraggedItem.getParent());
     	int ColumnOfOriginallyDraggedItem = GridPane.getColumnIndex(DraggedItem.getParent());
-    	
+
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
 	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
 	            	
-	            	int XPosOfThisItemOnBoard = RowOfOriginallyDraggedItem + (i - DraggedItem.getXpos());
-	            	int YPosOfThisItemOnBoard = ColumnOfOriginallyDraggedItem + (j - DraggedItem.getYpos());
-	            	
-	            	
-	            	//System.out.println( "nodePlacePos: "+ XPosOfThisItemOnBoard +"-"+ YPosOfThisItemOnBoard );
-	            	
+	            	int XPosOfThisItemOnBoard = RowOfOriginallyDraggedItem + (i - DraggedItem.getYpos());
+	            	int YPosOfThisItemOnBoard = ColumnOfOriginallyDraggedItem + (j - DraggedItem.getXpos());
+
 
 	            	ObservableList<Node> childrens = Board.getChildren();
 	            	
@@ -172,7 +142,7 @@ public class PuzzleShape {
         	            	)
         	            ) {
         	            	((StackPane)node).getChildren().add( PuzzlePieces[i][j] );
-        	            	System.out.println( "PosOfPlacedNode: "+ XPosOfThisItemOnBoard +"-"+ YPosOfThisItemOnBoard );
+        	            	System.out.println( "PlacedNode: "+ XPosOfThisItemOnBoard +"-"+ YPosOfThisItemOnBoard );
         	                break;
         	            }
         	        }
@@ -184,30 +154,18 @@ public class PuzzleShape {
 	
 	public WritableImage snapshot() {
 		
-		Group Group = new Group();
-//		
-//		for (int i=0; i<5; i++) {
-//	        for (int j=0; j<5; j++) {
-//	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
-//	            	
-//	            	Group.getChildren().add( PuzzlePieces[i][j] );
-//	            	
-//	            }
-//	        }
-//		}
-		
-
-        SnapshotParameters SnapShotParams = new SnapshotParameters();
+		SnapshotParameters SnapShotParams = new SnapshotParameters();
         SnapShotParams.setFill(Color.TRANSPARENT);
+        Scale Scale = new Scale( 2, 2 );
+        SnapShotParams.setTransform(Scale);
 		
-        WritableImage SnapShot = Group.snapshot(SnapShotParams, null);
+        WritableImage SnapShot = null;
         
         for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
 	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
 	            	
-//	            	Group.getChildren().remove( PuzzlePieces[i][j] );
-	            	SnapShot = PuzzlePieces[i][j].snapshot(SnapShotParams, null);break;//TODO fix all this
+	            	SnapShot = PuzzlePieces[i][j].getParent().snapshot(SnapShotParams, null);break;
 	            	
 	            }
 	        }
