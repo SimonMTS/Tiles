@@ -1,8 +1,13 @@
 package application;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
+import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -10,31 +15,46 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import models.PuzzlePiece;
+import models.PuzzleShape;
 
-public class GameController {
+public class GameController implements Initializable {
 	
 	@FXML
 	private GridPane Board;
 	
 	@FXML
-	private Rectangle Rectangle1;
+	private GridPane Dock;
+	
+	public void initialize( URL arg0, ResourceBundle arg1 ) {
+//		System.out.println( Dock );
+//		Dock.add(new PuzzlePiece(this), 2, 1);
+//		Dock.add(new PuzzlePiece(this), 2, 2);
+//		Dock.add(new PuzzlePiece(this), 2, 3);
+		
+		new PuzzleShape( "x....x....x....x.........", 1, Dock, this );
+		new PuzzleShape( "x....xx..................", 2, Dock, this );
+		new PuzzleShape( "xxx..xxx..xxx............", 3, Dock, this );
+		
+	}
 	
 	@FXML
-	private void onDragDetected( MouseEvent event ) {
+	public void onDragDetected( MouseEvent event ) {
 //		System.out.println("onDragDetected");
+
+		PuzzlePiece item = (PuzzlePiece) event.getSource();
 		
-        Dragboard db = Rectangle1.startDragAndDrop(TransferMode.MOVE);
+        Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
         
-        Rectangle1.setWidth(35);
-		Rectangle1.setHeight(35);
+        item.getShape().makeFullSize();
         
-        db.setDragView(Rectangle1.snapshot(null, null), 17.5, 17.5);
-        Rectangle1.setWidth(0);
-		Rectangle1.setHeight(0);
+        db.setDragView(item.getShape().snapshot(), 17.5, 17.5);
+        item.getShape().hide();
 
         ClipboardContent content = new ClipboardContent();
-        content.putString(Rectangle1.getId());
+        content.putString(item.getId());
         db.setContent(content);
 
         event.consume();
@@ -63,9 +83,11 @@ public class GameController {
 
 	    if (db.hasString()) {
 	    	StackPane sp = (StackPane) event.getTarget();
-	    	sp.getChildren().add(Rectangle1);
-	    	Rectangle1.setWidth(35);
-			Rectangle1.setHeight(35);
+	    	PuzzlePiece item = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+db.getString() );
+	    	
+	    	sp.getChildren().add(item);
+	    	item.getShape().movePieces(event);
+	    	item.getShape().makeFullSize();
 	    	
 //	    	System.out.println( sp );
 	    	System.out.println( GridPane.getRowIndex(sp) +"-"+ GridPane.getColumnIndex(sp) );
@@ -77,10 +99,12 @@ public class GameController {
 	}
 	
 	@FXML
-	private void onDragDone( DragEvent event ) {
+	public void onDragDone( DragEvent event ) {
 		if ( ((Node) event.getTarget()).getParent().getParent() != Board ) {
-			Rectangle1.setWidth(20);
-			Rectangle1.setHeight(20);
+			Dragboard db = event.getDragboard();
+			PuzzlePiece item = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+db.getString() );
+			
+			item.getShape().makeSmall();
 		}
 	}
 	
