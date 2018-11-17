@@ -25,6 +25,8 @@ public class PuzzlePiece extends Rectangle {
 		
 		this.setId( String.valueOf( UUID.randomUUID() ) );
 		
+		this.getStyleClass().add("draggable");
+		
 		this.setArcHeight( 5 );
 		this.setArcWidth( 5 );
 		

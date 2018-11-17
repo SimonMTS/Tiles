@@ -4,8 +4,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -15,6 +18,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -40,6 +44,9 @@ public class GameController implements Initializable {
 	@FXML
 	private Text HighScore;
 	
+	@FXML
+	private Pane MenuPane;
+	
 	public void initialize( URL arg0, ResourceBundle arg1 ) {
 		
 		if ( false ) {
@@ -52,6 +59,16 @@ public class GameController implements Initializable {
 			
 		}
 		
+	}
+	
+	@FXML
+	public void onMenuClick( ActionEvent event ) {
+		MenuPane.setTranslateY(0);
+	}
+	
+	@FXML
+	public void onContinueClick( ActionEvent event ) {
+		MenuPane.setTranslateY(700);
 	}
 	
 	@FXML
@@ -150,24 +167,50 @@ public class GameController implements Initializable {
 	}
 	
 	private boolean hasLost() {
+		boolean CanPlace = false;
 		
 		// for each GridPane position
 		ObservableList<Node> childrens = Board.getChildren();
-            	for ( Node node : childrens ) {
-    	            	
-//    	            	if ( !((StackPane)node).getChildren().isEmpty() ) {
-//        	            	return false;
-//    	            	}
-    	            	
-//    	            	if ( ((PuzzlePiece)Dock1.getChildren().toArray()[0]).getShape().canPlace( ((StackPane)node), "" ) ) {
-//    	            		System.out.println( "asd" );
-//    	            	}
-    	            	
-    	            	System.out.println( node +" - "+ GridPane.getRowIndex(node) +"-"+GridPane.getColumnIndex(node) );
-    	            	
-    	            }
+    	for ( Node node : childrens ) {
+    		StackPane GridNode = ((StackPane)node);
+            
+    		if ( GridNode.getChildren().isEmpty() ) {
+    			
+    			// for each PuzzlePiece in Dock1
+                ObservableList<Node> AllPuzzlePiecesDock1 = Dock1.getChildren();
+                if ( AllPuzzlePiecesDock1.size() > 0 ) {
+                	for ( Node Part : AllPuzzlePiecesDock1 ) {
+                    	if ( ((PuzzlePiece)Part).getShape().canPlace( GridNode, ((PuzzlePiece)Part).getId() ) ) {
+                    		CanPlace = true;
+                    	}
+                    }
+                }
+                
+             // for each PuzzlePiece in Dock2
+                ObservableList<Node> AllPuzzlePiecesDock2 = Dock2.getChildren();
+                if ( AllPuzzlePiecesDock2.size() > 0 ) {
+                	for ( Node Part : AllPuzzlePiecesDock2 ) {
+                    	if ( ((PuzzlePiece)Part).getShape().canPlace( GridNode, ((PuzzlePiece)Part).getId() ) ) {
+                    		CanPlace = true;
+                    	}
+                    }
+                }
+                
+             // for each PuzzlePiece in Dock3
+                ObservableList<Node> AllPuzzlePiecesDock3 = Dock3.getChildren();
+                if ( AllPuzzlePiecesDock3.size() > 0 ) {
+                	for ( Node Part : AllPuzzlePiecesDock3 ) {
+                    	if ( ((PuzzlePiece)Part).getShape().canPlace( GridNode, ((PuzzlePiece)Part).getId() ) ) {
+                    		CanPlace = true;
+                    	}
+                    }
+                }
+                
+    		}
+    			
+    	}
 		
-		return true;
+		return !CanPlace;
 	}
 	
 	private int removeLines() {

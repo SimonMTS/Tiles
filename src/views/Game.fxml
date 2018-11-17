@@ -6,12 +6,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="425.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GameController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="425.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GameController">
    <children>
       <GridPane layoutX="12.5" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="400.0">
         <columnConstraints>
@@ -33,7 +35,14 @@
                   <Font size="30.0" />
                </font>
             </Text>
-            <Button mnemonicParsing="false" text="menu" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
+            <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onMenuClick" prefHeight="50.0" prefWidth="50.0" styleClass="pausebtn" GridPane.columnIndex="2" GridPane.halignment="RIGHT">
+               <graphic>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@pause.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                <image>
                   <Image url="@trophy.png" />
@@ -217,5 +226,26 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
       </GridPane>
+      <Pane fx:id="MenuPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="425.0">
+         <children>
+            <Rectangle fill="WHITE" height="700.0" opacity="0.5" stroke="WHITE" strokeType="INSIDE" strokeWidth="0.0" width="425.0" />
+            <Button layoutX="25.0" layoutY="325.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onContinueClick" prefHeight="175.0" prefWidth="175.0" styleClass="continuebtn">
+               <graphic>
+                  <ImageView fitHeight="175.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true" scaleX="0.5" scaleY="0.5">
+                     <image>
+                        <Image url="@play.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button layoutX="225.0" layoutY="325.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="175.0" prefWidth="175.0" styleClass="restartbtn">
+               <graphic>
+                  <ImageView fitHeight="175.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true" scaleX="0.4" scaleY="0.4">
+                     <image>
+                        <Image url="@restart.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

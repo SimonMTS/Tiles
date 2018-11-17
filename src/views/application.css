@@ -1,1 +1,32 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.pausebtn {
+	-fx-background-color: #FFC107;
+	-fx-cursor: HAND;
+}
+
+.pausebtn:hover {
+    -fx-background-color: #FFD54F;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+
+.continuebtn {
+	-fx-background-color: #8BC34A;
+	-fx-cursor: HAND;
+}
+.continuebtn:hover {
+    -fx-background-color: #9CCC65;
+}
+
+
+.restartbtn {
+	-fx-background-color: #03A9F4
+;
+	-fx-cursor: HAND;
+}
+.restartbtn:hover {
+    -fx-background-color: #29B6F6
+;
+}
