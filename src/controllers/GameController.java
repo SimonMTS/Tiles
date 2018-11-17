@@ -18,30 +18,39 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import models.PuzzlePiece;
 import models.PuzzleShape;
 
 public class GameController implements Initializable {
-	
-	// TODO split GameController into controller and model
 	
 	@FXML
 	private GridPane Board;
 	
 	@FXML
 	private GridPane Dock1;
-
 	@FXML
 	private GridPane Dock2;
-
 	@FXML
 	private GridPane Dock3;
 	
+	@FXML
+	private Text Score;
+	@FXML
+	private Text HighScore;
+	
 	public void initialize( URL arg0, ResourceBundle arg1 ) {
 		
-		new PuzzleShape( Dock1, this );
-		new PuzzleShape( Dock2, this );
-		new PuzzleShape( Dock3, this );
+		if ( false ) {
+			
+		} else {
+			
+			new PuzzleShape( Dock1, this );
+			new PuzzleShape( Dock2, this );
+			new PuzzleShape( Dock3, this );
+			
+		}
 		
 	}
 	
@@ -52,7 +61,8 @@ public class GameController implements Initializable {
 		
         Dragboard db = item.startDragAndDrop(TransferMode.MOVE);
         
-        db.setDragView(item.getShape().snapshot(), 17.5+(item.getXpos()*40), 17.5+(item.getYpos()*40));
+        double windowScaling = Screen.getPrimary().getOutputScaleX();
+        db.setDragView(item.getShape().snapshot(), (17.5+(item.getXpos()*40))*windowScaling, (17.5+(item.getYpos()*40))*windowScaling);
         item.getShape().hide();
 
         ClipboardContent content = new ClipboardContent();
@@ -94,15 +104,14 @@ public class GameController implements Initializable {
 		        success = true;
 		        
 		        item.getShape().disableDraggable();
+		        
+		        afterShapePlaced( item.getShape() );
 	    	}
 	    	
 	    }
 
 	    event.setDropCompleted(success);
 	    event.consume();
-	    
-	    removeLines();
-	    refillDock();
 	    
 	    if ( hasLost() ) {
 	    	System.out.println("u lose");
@@ -119,6 +128,15 @@ public class GameController implements Initializable {
 		}
 	}
 	
+	private void afterShapePlaced( PuzzleShape PlacedShape ) {
+		
+		int LinesRemoved = removeLines();
+	    refillDock();
+		
+	    addScore( PlacedShape, LinesRemoved );
+	    
+	}
+	
 	private void refillDock() {
 		
 		if ( Dock1.getChildren().isEmpty() && Dock2.getChildren().isEmpty() && Dock3.getChildren().isEmpty() ) {
@@ -133,13 +151,29 @@ public class GameController implements Initializable {
 	
 	private boolean hasLost() {
 		
+		// for each GridPane position
+		ObservableList<Node> childrens = Board.getChildren();
+            	for ( Node node : childrens ) {
+    	            	
+//    	            	if ( !((StackPane)node).getChildren().isEmpty() ) {
+//        	            	return false;
+//    	            	}
+    	            	
+//    	            	if ( ((PuzzlePiece)Dock1.getChildren().toArray()[0]).getShape().canPlace( ((StackPane)node), "" ) ) {
+//    	            		System.out.println( "asd" );
+//    	            	}
+    	            	
+    	            	System.out.println( node +" - "+ GridPane.getRowIndex(node) +"-"+GridPane.getColumnIndex(node) );
+    	            	
+    	            }
 		
-		return false;
+		return true;
 	}
 	
-	private void removeLines() {
+	private int removeLines() {
 		
 		ObservableList<Node> childrens = Board.getChildren();
+		int PuzzlePiecesRemoved = 0;
 		boolean[] removeRow = new boolean[10];
 		boolean[] removeColumn = new boolean[10];
 		
@@ -168,6 +202,7 @@ public class GameController implements Initializable {
 				for ( Node node : childrens ) {
 		            if ( GridPane.getRowIndex(node) == i ) {
 		            	((StackPane)node).getChildren().clear();
+		            	PuzzlePiecesRemoved++;
 		            }
 				}
 			}
@@ -175,9 +210,50 @@ public class GameController implements Initializable {
 				for ( Node node : childrens ) {
 		            if ( GridPane.getColumnIndex(node) == i ) {
 		            	((StackPane)node).getChildren().clear();
+		            	PuzzlePiecesRemoved++;
 		            }
 				}
 			}
+		}
+		
+		return PuzzlePiecesRemoved/10;
+		
+	}
+	
+	public void addScore( PuzzleShape PlacedShape, int LinesRemoved ) {
+		
+		int ShapeSize = PlacedShape.getNumberOfPuzzlePieces(),
+			Bonus=0;
+		
+		switch ( LinesRemoved ) {
+			case 0:
+			case 1:
+				Bonus = 0;
+				break;
+			case 2:
+				Bonus = 10;
+				break;
+			case 3:
+				Bonus = 30;
+				break;
+			case 4:
+				Bonus = 60;
+				break;
+			case 5:
+				Bonus = 100;
+				break;
+			case 6:
+			default:
+				Bonus = 150;
+				break;
+		}
+		
+		int ScoreThisTurn = ShapeSize + (10*LinesRemoved) + Bonus;
+		
+		Score.setText( String.valueOf( Integer.parseInt( Score.getText() )+ScoreThisTurn ) );
+		
+		if ( Integer.parseInt( Score.getText() ) > Integer.parseInt( HighScore.getText() ) ) {
+			HighScore.setText( String.valueOf( Integer.parseInt( Score.getText() ) ) );
 		}
 		
 	}

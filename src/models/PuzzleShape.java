@@ -166,7 +166,6 @@ public class PuzzleShape {
         	            	)
         	            ) {
         	            	((StackPane)node).getChildren().add( PuzzlePieces[i][j] );
-//        	            	System.out.println( "PlacedNode: "+ XPosOfThisItemOnBoard +"-"+ YPosOfThisItemOnBoard );
         	                break;
         	            }
         	        }
@@ -193,13 +192,28 @@ public class PuzzleShape {
 		
 	}
 	
+	public boolean canPlace( StackPane StackPane, String PuzzleId ) {
+		
+		return canPlaceCalc( StackPane, PuzzleId );
+		
+	}
+	
 	public boolean canPlace( DragEvent event ) {
 		
-		GridPane Board = (GridPane) ((StackPane) event.getTarget()).getParent();
+		StackPane sp = (StackPane) event.getTarget();
+		String PuzzleId = event.getDragboard().getString();
 		
-    	PuzzlePiece DraggedItem = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+event.getDragboard().getString() );
-    	int RowOfOriginallyDraggedItem = GridPane.getRowIndex((Node) event.getTarget());
-    	int ColumnOfOriginallyDraggedItem = GridPane.getColumnIndex((Node) event.getTarget());
+		return canPlaceCalc( sp, PuzzleId );
+		
+	}
+	
+	private boolean canPlaceCalc( StackPane sp, String PuzzleId ) {
+		
+		GridPane Board = (GridPane) sp.getParent();
+		
+    	PuzzlePiece DraggedItem = (PuzzlePiece) ((Node) sp).getScene().lookup( "#"+PuzzleId );
+    	int RowOfOriginallyDraggedItem = GridPane.getRowIndex((Node) sp);
+    	int ColumnOfOriginallyDraggedItem = GridPane.getColumnIndex((Node) sp);
 
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
@@ -239,6 +253,21 @@ public class PuzzleShape {
 	    }
 		
 		return true;
+	}
+	
+	public int getNumberOfPuzzlePieces() {
+		
+		int NumberOfPuzzlePieces = 0;
+		
+		for (int i=0; i<5; i++) {
+	        for (int j=0; j<5; j++) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            	NumberOfPuzzlePieces++;
+	            }
+	        }
+		}
+		
+		return NumberOfPuzzlePieces;
 	}
 	
 	public WritableImage snapshot() {

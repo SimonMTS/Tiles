@@ -64,4 +64,11 @@ public class PuzzlePiece extends Rectangle {
 		return PuzzleShapeY;
 	}
 	
+	public void animateDisappearance() {
+		
+//		this.setWidth(40);
+//		this.setHeight(40);
+		
+	}
+	
 }
