@@ -2,7 +2,7 @@ package models;
 
 import java.util.UUID;
 
-import application.GameController;
+import controllers.GameController;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;

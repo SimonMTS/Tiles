@@ -1,5 +1,6 @@
 package application;
 	
+import controllers.GameController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -14,7 +15,7 @@ public class Main extends Application {
 		primaryStage.setTitle("Tiles");
         
 		FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("Game.fxml"));
+        loader.setLocation(Main.class.getResource("./../views/Game.fxml"));
         AnchorPane rootLayout = (AnchorPane) loader.load();
         
         Scene scene = new Scene(rootLayout);

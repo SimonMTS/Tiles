@@ -1,4 +1,4 @@
-package application;
+package controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -36,13 +36,9 @@ public class GameController implements Initializable {
 	
 	public void initialize( URL arg0, ResourceBundle arg1 ) {
 		
-		new PuzzleShape( "x....x....x....x.........", Dock1, this );
-		new PuzzleShape( "x....xx..................", Dock2, this );
-//		new PuzzleShape( "xxx..xxx..xxx............", Dock3, this );
-		
-//		new PuzzleShape( "xxxxxxxxxxxxxxxxxxxxxxxxxx", Dock1, this );
-//		new PuzzleShape( "xxxxxxxxxxxxxxxxxxxxxxxxxx", Dock2, this );
-		new PuzzleShape( "xxxxxxxxxxxxxxxxxxxxxxxxxx", Dock3, this );
+		new PuzzleShape( Dock1, this );
+		new PuzzleShape( Dock2, this );
+		new PuzzleShape( Dock3, this );
 		
 	}
 	
@@ -82,20 +78,26 @@ public class GameController implements Initializable {
 	    Dragboard db = event.getDragboard();
 	    boolean success = false;
 
-	    if (db.hasString()) {
+	    if ( db.hasString() && event.getTarget() instanceof StackPane ) {
 	    	StackPane sp = (StackPane) event.getTarget();
 	    	PuzzlePiece item = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+db.getString() );
 	    	
-	    	sp.getChildren().add(item);
-	    	item.getShape().movePieces(event);
-	    	item.getShape().show();
+	    	if ( item.getShape().canPlace(event) ) {
+	    		
+	    		sp.getChildren().add(item);
+		    	item.getShape().movePieces(event);
+		    	item.getShape().show();
+		    	
+		    	System.out.println( GridPane.getRowIndex(sp) +"-"+ GridPane.getColumnIndex(sp) );
+		        success = true;
+	    	}
 	    	
-	    	System.out.println( GridPane.getRowIndex(sp) +"-"+ GridPane.getColumnIndex(sp) );
-	        success = true;
 	    }
 
 	    event.setDropCompleted(success);
 	    event.consume();
+	    
+	    refillDock();
 	}
 	
 	@FXML
@@ -106,6 +108,18 @@ public class GameController implements Initializable {
 			
 			item.getShape().show();
 		}
+	}
+	
+	private void refillDock() {
+		
+		if ( Dock1.getChildren().isEmpty() && Dock2.getChildren().isEmpty() && Dock3.getChildren().isEmpty() ) {
+
+			new PuzzleShape( Dock1, this );
+			new PuzzleShape( Dock2, this );
+			new PuzzleShape( Dock3, this );
+			
+		}
+		
 	}
 	
 }

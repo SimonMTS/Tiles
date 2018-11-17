@@ -1,8 +1,17 @@
 package models;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.stream.Stream;
 
-import application.GameController;
+import controllers.GameController;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -18,14 +27,28 @@ public class PuzzleShape {
 
 	private PuzzlePiece[][] PuzzlePieces = new PuzzlePiece[5][5];
 	
-	public PuzzleShape( String Placement, GridPane Dock, GameController GameController ) {
+	public PuzzleShape( GridPane Dock, GameController GameController ) {
+		
+		String Placement = "xxx..xxx..xxx............";
+		int PlacementNumber = 0;
+		
+		try (BufferedReader r = Files.newBufferedReader( Paths.get("./src/application/config.txt"), Charset.defaultCharset() )) {
+			Iterator<String> it = r.lines().iterator();
+			
+			String Placements[] = new String[19];
+		    for (int i = 0; i < 19; i++) {
+		        Placements[i] = it.next();
+		    }
+			
+		    PlacementNumber = new Random().nextInt(19);
+		    Placement = Placements[ PlacementNumber ];
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		Color Colr;
 		
-		// TODO: relate to shape
-		int randomNumber = new Random().nextInt(19);
-		
-		switch ( randomNumber ) {
+		switch ( PlacementNumber ) {
 			case 0:
 				Colr = Color.rgb(122,130,207);
 //				Colr = Color.RED;
@@ -127,10 +150,8 @@ public class PuzzleShape {
 	            	int XPosOfThisItemOnBoard = RowOfOriginallyDraggedItem + (i - DraggedItem.getYpos());
 	            	int YPosOfThisItemOnBoard = ColumnOfOriginallyDraggedItem + (j - DraggedItem.getXpos());
 
-
 	            	ObservableList<Node> childrens = Board.getChildren();
-	            	
-        	        for ( Node node : childrens ) {
+	            	for ( Node node : childrens ) {
         	            if (
         	            	( 
         	            		GridPane.getRowIndex(node) == XPosOfThisItemOnBoard && 
@@ -142,7 +163,7 @@ public class PuzzleShape {
         	            	)
         	            ) {
         	            	((StackPane)node).getChildren().add( PuzzlePieces[i][j] );
-        	            	System.out.println( "PlacedNode: "+ XPosOfThisItemOnBoard +"-"+ YPosOfThisItemOnBoard );
+//        	            	System.out.println( "PlacedNode: "+ XPosOfThisItemOnBoard +"-"+ YPosOfThisItemOnBoard );
         	                break;
         	            }
         	        }
@@ -150,6 +171,54 @@ public class PuzzleShape {
 	            }
 	        }
 	    }
+	}
+	
+	public boolean canPlace( DragEvent event ) {
+		
+		GridPane Board = (GridPane) ((StackPane) event.getTarget()).getParent();
+		
+    	PuzzlePiece DraggedItem = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+event.getDragboard().getString() );
+    	int RowOfOriginallyDraggedItem = GridPane.getRowIndex((Node) event.getTarget());
+    	int ColumnOfOriginallyDraggedItem = GridPane.getColumnIndex((Node) event.getTarget());
+
+		for (int i=0; i<5; i++) {
+	        for (int j=0; j<5; j++) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            	
+	            	int XPosOfThisItemOnBoard = RowOfOriginallyDraggedItem + (i - DraggedItem.getYpos());
+	            	int YPosOfThisItemOnBoard = ColumnOfOriginallyDraggedItem + (j - DraggedItem.getXpos());
+
+	            	ObservableList<Node> childrens = Board.getChildren();
+	            	for ( Node node : childrens ) {
+        	            if (
+        	            	( 
+        	            		GridPane.getRowIndex(node) == XPosOfThisItemOnBoard && 
+        	            		GridPane.getColumnIndex(node) == YPosOfThisItemOnBoard 
+        	            	) &&
+        	            	( 
+        	            		GridPane.getRowIndex(node) != RowOfOriginallyDraggedItem || 
+        	            		GridPane.getColumnIndex(node) != ColumnOfOriginallyDraggedItem 
+        	            	)
+        	            ) {
+        	            	
+        	            	if ( !((StackPane)node).getChildren().isEmpty() ) {
+            	            	return false;
+        	            	}
+        	            	
+        	            } else if (
+        	            	XPosOfThisItemOnBoard > 9 || XPosOfThisItemOnBoard < 0 || 
+	        				YPosOfThisItemOnBoard > 9 || YPosOfThisItemOnBoard < 0
+        	            ) {
+        	            	return false;
+        	            }
+        	            
+        	        }
+		        	
+	            }
+	        }
+	    }
+		
+		return true;
 	}
 	
 	public WritableImage snapshot() {
