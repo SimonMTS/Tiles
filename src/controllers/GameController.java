@@ -3,6 +3,7 @@ package controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
@@ -21,6 +22,8 @@ import models.PuzzlePiece;
 import models.PuzzleShape;
 
 public class GameController implements Initializable {
+	
+	// TODO split GameController into controller and model
 	
 	@FXML
 	private GridPane Board;
@@ -88,8 +91,9 @@ public class GameController implements Initializable {
 		    	item.getShape().movePieces(event);
 		    	item.getShape().show();
 		    	
-		    	System.out.println( GridPane.getRowIndex(sp) +"-"+ GridPane.getColumnIndex(sp) );
 		        success = true;
+		        
+		        item.getShape().disableDraggable();
 	    	}
 	    	
 	    }
@@ -97,12 +101,17 @@ public class GameController implements Initializable {
 	    event.setDropCompleted(success);
 	    event.consume();
 	    
+	    removeLines();
 	    refillDock();
+	    
+	    if ( hasLost() ) {
+	    	System.out.println("u lose");
+	    }
 	}
 	
 	@FXML
 	public void onDragDone( DragEvent event ) {
-		if ( ((Node) event.getTarget()).getParent().getParent() != Board ) {
+		if ( ((Node) event.getTarget()).getParent() != null && ((Node) event.getTarget()).getParent().getParent() != Board ) {
 			Dragboard db = event.getDragboard();
 			PuzzlePiece item = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+db.getString() );
 			
@@ -118,6 +127,57 @@ public class GameController implements Initializable {
 			new PuzzleShape( Dock2, this );
 			new PuzzleShape( Dock3, this );
 			
+		}
+		
+	}
+	
+	private boolean hasLost() {
+		
+		
+		return false;
+	}
+	
+	private void removeLines() {
+		
+		ObservableList<Node> childrens = Board.getChildren();
+		boolean[] removeRow = new boolean[10];
+		boolean[] removeColumn = new boolean[10];
+		
+		for (int i=0; i<10; i++) {
+			removeRow[i] = true;
+			for ( Node node : childrens ) {
+	            if ( GridPane.getRowIndex(node) == i && ((StackPane)node).getChildren().isEmpty() ) {
+	            	removeRow[i] = false;
+	            	break;
+	            }
+			}
+		}
+		
+		for (int i=0; i<10; i++) {
+			removeColumn[i] = true;
+			for ( Node node : childrens ) {
+	            if ( GridPane.getColumnIndex(node) == i && ((StackPane)node).getChildren().isEmpty() ) {
+	            	removeColumn[i] = false;
+	            	break;
+	            }
+			}
+		}
+		
+		for (int i=0; i<10; i++) {
+			if (removeRow[i]) {
+				for ( Node node : childrens ) {
+		            if ( GridPane.getRowIndex(node) == i ) {
+		            	((StackPane)node).getChildren().clear();
+		            }
+				}
+			}
+			if (removeColumn[i]) {
+				for ( Node node : childrens ) {
+		            if ( GridPane.getColumnIndex(node) == i ) {
+		            	((StackPane)node).getChildren().clear();
+		            }
+				}
+			}
 		}
 		
 	}

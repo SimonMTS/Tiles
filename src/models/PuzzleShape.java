@@ -13,11 +13,13 @@ import java.util.stream.Stream;
 
 import controllers.GameController;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -171,6 +173,23 @@ public class PuzzleShape {
 	            }
 	        }
 	    }
+	}
+	
+	public void disableDraggable() {
+		
+		for (int i=0; i<5; i++) {
+	        for (int j=0; j<5; j++) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            	
+	            	PuzzlePieces[i][j].setOnDragDetected(new EventHandler <MouseEvent>() {
+
+						@Override
+						public void handle(MouseEvent arg0) { }});
+	            	
+	            }
+	        }
+		}
+		
 	}
 	
 	public boolean canPlace( DragEvent event ) {
