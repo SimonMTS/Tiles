@@ -24,6 +24,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
+import javafx.stage.Screen;
 
 public class PuzzleShape {
 
@@ -244,7 +245,10 @@ public class PuzzleShape {
 		
 		SnapshotParameters SnapShotParams = new SnapshotParameters();
         SnapShotParams.setFill(Color.TRANSPARENT);
-        Scale Scale = new Scale( 2, 2 );
+        
+        double windowScaling = Screen.getPrimary().getOutputScaleX();
+        
+        Scale Scale = new Scale( 2*windowScaling, 2*windowScaling );
         SnapShotParams.setTransform(Scale);
 		
         WritableImage SnapShot = null;
