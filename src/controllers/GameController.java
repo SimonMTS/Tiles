@@ -1,6 +1,13 @@
 package controllers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import javafx.collections.ObservableList;
@@ -12,6 +19,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -46,10 +54,36 @@ public class GameController implements Initializable {
 	
 	@FXML
 	private Pane MenuPane;
+	@FXML
+	private Text ScoreText;
+	@FXML
+	private Text ScoreTypeText;
+	@FXML
+	private ImageView HighScoreImg;
 	
 	public void initialize( URL arg0, ResourceBundle arg1 ) {
 		
-		if ( false ) {
+		if ( true ) {
+			
+			try (BufferedReader r = Files.newBufferedReader( Paths.get("./src/application/savegame.txt"), Charset.defaultCharset() )) {
+				Iterator<String> it = r.lines().iterator();
+				
+				String Placements[] = new String[19];
+			    for (int i = 0; i < 13; i++) {
+			        Placements[i] = it.next();
+			    }
+			    
+			    
+			    new PuzzleShape( Dock1, this, Integer.parseInt( Placements[10].split(" ")[0] ) );
+				new PuzzleShape( Dock2, this, Integer.parseInt( Placements[10].split(" ")[1] ) );
+				new PuzzleShape( Dock3, this, Integer.parseInt( Placements[10].split(" ")[2] ) );
+			    
+			    Score.setText( Placements[11] );
+			    HighScore.setText( Placements[12] );
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 		} else {
 			
@@ -61,8 +95,33 @@ public class GameController implements Initializable {
 		
 	}
 	
+	public int[] getSaveGameInfo() {
+		int[] info = new int[2];
+//		System.out.println( Score.getText() );
+//		info[0] = Integer.parseInt( Score.getText() );
+//		info[1] = Integer.parseInt( HighScore.getText() );
+		info[0] = 0;
+		info[1] = 1589;
+		
+		return info;
+	}
+	
 	@FXML
 	public void onMenuClick( ActionEvent event ) {
+		ScoreText.setText( String.valueOf( Integer.parseInt( Score.getText() ) ) );
+		
+		if ( true ) {
+			ScoreTypeText.setText( "No moves left" );
+		} else {
+			ScoreTypeText.setText( "You surrendered" );
+		}
+		
+		if ( true ) {
+			HighScoreImg.setOpacity(1);
+		} else {
+			HighScoreImg.setOpacity(0);
+		}
+		
 		MenuPane.setTranslateY(0);
 	}
 	

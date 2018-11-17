@@ -15,6 +15,7 @@
 .continuebtn {
 	-fx-background-color: #8BC34A;
 	-fx-cursor: HAND;
+	-fx-background-radius: 10;
 }
 .continuebtn:hover {
     -fx-background-color: #9CCC65;
@@ -22,11 +23,18 @@
 
 
 .restartbtn {
-	-fx-background-color: #03A9F4
-;
+	-fx-background-color: #FF9800;
 	-fx-cursor: HAND;
+	-fx-background-radius: 10;
 }
 .restartbtn:hover {
-    -fx-background-color: #29B6F6
-;
+    -fx-background-color: #FFA726;
+}
+
+.scorescreen {
+	-fx-background-color: #03A9F4;
+}
+
+.StackPane {
+	-fx-background-radius: 5;
 }

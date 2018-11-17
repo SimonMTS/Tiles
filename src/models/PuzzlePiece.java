@@ -27,8 +27,8 @@ public class PuzzlePiece extends Rectangle {
 		
 		this.getStyleClass().add("draggable");
 		
-		this.setArcHeight( 5 );
-		this.setArcWidth( 5 );
+		this.setArcHeight( 10 );
+		this.setArcWidth( 10 );
 		
 		this.setFill( Color );
 		

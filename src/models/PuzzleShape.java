@@ -31,9 +31,16 @@ public class PuzzleShape {
 	private PuzzlePiece[][] PuzzlePieces = new PuzzlePiece[5][5];
 	
 	public PuzzleShape( GridPane Dock, GameController GameController ) {
+		PuzzleShapeConst( Dock, GameController, new Random().nextInt(19) );
+	}
+	
+	public PuzzleShape( GridPane Dock, GameController GameController, int ShapeNumber ) {
+		PuzzleShapeConst( Dock, GameController, ShapeNumber );
+	}
+	
+	public void PuzzleShapeConst( GridPane Dock, GameController GameController, int ShapeNumber ) {
 		
 		String Placement = "xxx..xxx..xxx............";
-		int PlacementNumber = 0;
 		
 		try (BufferedReader r = Files.newBufferedReader( Paths.get("./src/application/config.txt"), Charset.defaultCharset() )) {
 			Iterator<String> it = r.lines().iterator();
@@ -43,15 +50,14 @@ public class PuzzleShape {
 		        Placements[i] = it.next();
 		    }
 			
-		    PlacementNumber = new Random().nextInt(19);
-		    Placement = Placements[ PlacementNumber ];
+		    Placement = Placements[ ShapeNumber ];
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		Color Colr;
 		
-		switch ( PlacementNumber ) {
+		switch ( ShapeNumber ) {
 			case 0:
 				Colr = Color.rgb(122,130,207);
 //				Colr = Color.RED;
