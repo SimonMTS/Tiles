@@ -514,12 +514,12 @@ public class GameController implements Initializable {
 			encoded = Files.readAllBytes(Paths.get("./src/application/"+Main.getSaveFile()));
 			String FileAsString = new String(encoded, Charset.defaultCharset());
 			
-//x10		..........\r\n
-//			(-?[1-9]\\d*|0) (-?[1-9]\\d*|0) (-?[1-9]\\d*|0) \r\n
+//			((([a-s]|\.){10})\n){10}
+//			(-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) \r\n
 //			\\d+\r\n
 //			\\d+\r\n
 //			
-			return FileAsString.matches("(..........\r\n)*(-?[1-9]\\d*|0) (-?[1-9]\\d*|0) (-?[1-9]\\d*|0) \r\n\\d+\r\n\\d+\r\n");
+			return FileAsString.matches("((([a-s]|\\.){10})\r\n){10}(-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) \r\n\\d+\r\n\\d+\r\n");
 			
 		} catch (IOException e) {
 			
