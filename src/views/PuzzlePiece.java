@@ -1,14 +1,22 @@
-package models;
+package views;
 
 import java.util.UUID;
 
 import controllers.GameController;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -143,26 +151,75 @@ public class PuzzlePiece extends Rectangle {
 		
 	}
 	
-	public void remove() {
+	public void remove( PuzzlePiece PlacedPiece, GameController GameController, char Direction ) {
 		
-		this.setHeight(40);
-		this.setWidth(40);
-		
-		KeyValue HeightValue = new KeyValue(this.heightProperty(), 0);
-        KeyFrame HeightFrame = new KeyFrame(Duration.millis(100), HeightValue);
-        Timeline HeightTimeline = new Timeline(HeightFrame);
-		
-		KeyValue widthValue = new KeyValue(this.widthProperty(), 0);
-        KeyFrame WidthFrame = new KeyFrame(Duration.millis(100), widthValue);
-        Timeline WidthTimeline = new Timeline(WidthFrame);
-        
-        WidthTimeline.setOnFinished(event -> {
+		int PlacedPos = 0;
+		ObservableList<Node> childrens = GameController.getBoard().getChildren();
+	    for ( int i=0;i<10;i++ ) {
+	    	for ( int j=0;j<10;j++ ) {
+	    		for ( Node node : childrens ) {
+	    			if ( PlacedPiece.getParent() == node && GridPane.getRowIndex(node) == i && GridPane.getColumnIndex(node) == j ) {
+	    				
+	    				if ( Direction == 'y' ) {
+	    					PlacedPos = i;
+	    				} else {
+	    					PlacedPos = j;
+	    				}
+	    				
+	    			}
+	    		}		
+	    	}
+	    }
 
+		int MyPos = 0;
+	    for ( int i=0;i<10;i++ ) {
+	    	for ( int j=0;j<10;j++ ) {
+	    		for ( Node node : childrens ) {
+	    			if ( this.getParent() == node && GridPane.getRowIndex(node) == i && GridPane.getColumnIndex(node) == j ) {
+	    				
+	    				if ( Direction == 'y' ) {
+	    					MyPos = i;
+	    				} else {
+	    					MyPos = j;
+	    				}
+	    				
+	    			}
+	    		}		
+	    	}
+	    }
+	    
+	    int Difference = 0;
+        if ( MyPos <= PlacedPos ) {
+        	Difference = (PlacedPos - MyPos);
+        }
+        if ( MyPos >= PlacedPos ) {
+        	Difference = (MyPos - PlacedPos);
+        }
+		
+		TranslateTransition Place = new TranslateTransition(Duration.millis(500), this);
+		Place.setToX( this.getX() );
+		Place.setToY( this.getY() );
+		
+		ScaleTransition Scale = new ScaleTransition(Duration.millis(500), this);
+		Scale.setFromX(1);
+		Scale.setFromY(1);
+		Scale.setToX(0);
+		Scale.setToY(0);
+		
+		Scale.setOnFinished(event -> {
+        	
         	((StackPane)this.getParent()).getChildren().remove(this);
         	
+        	GameController.saveGameInfo();
+        	
     	});
-        WidthTimeline.play();
-        HeightTimeline.play();
+		
+		ParallelTransition pt = new ParallelTransition(Scale, Place);
+		
+
+		SequentialTransition seq = new SequentialTransition( new PauseTransition(Duration.millis(Difference*50)), pt );
+
+		seq.play();
 		
 	}
 }

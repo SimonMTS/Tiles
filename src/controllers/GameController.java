@@ -39,8 +39,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
-import models.PuzzlePiece;
-import models.PuzzleShape;
+import views.PuzzlePiece;
+import views.PuzzleShape;
 
 public class GameController implements Initializable {
 	
@@ -74,11 +74,12 @@ public class GameController implements Initializable {
 	@FXML
 	private Button ContinueBtn;
 	
+	
 	public void initialize( URL arg0, ResourceBundle arg1 ) {
 		
-		if ( true ) {
+		if ( validSaveFile() ) {
 			
-			try (BufferedReader r = Files.newBufferedReader( Paths.get("./src/application/savegame.txt"), Charset.defaultCharset() )) {
+			try (BufferedReader r = Files.newBufferedReader( Paths.get("./src/application/"+Main.getSaveFile()), Charset.defaultCharset() )) {
 				Iterator<String> it = r.lines().iterator();
 				
 				String Placements[] = new String[19];
@@ -93,6 +94,7 @@ public class GameController implements Initializable {
 			    	
 			    	for ( int j=0;j<10;j++ ) {
 			    		if ( !SavedRow[j].equals(".") ) {
+			    			SavedRow[j] = SavedRow[j].toLowerCase();
 			    			
 			    			ObservableList<Node> childrens = Board.getChildren();
 				    		for ( Node node : childrens ) {
@@ -131,9 +133,9 @@ public class GameController implements Initializable {
 			
 		} else {
 			
-			new PuzzleShape( Dock1, this );
-			new PuzzleShape( Dock2, this );
-			new PuzzleShape( Dock3, this );
+			Dock1Shape = new PuzzleShape( Dock1, this );
+			Dock2Shape = new PuzzleShape( Dock2, this );
+			Dock3Shape = new PuzzleShape( Dock3, this );
 			
 		}
 		
@@ -178,7 +180,20 @@ public class GameController implements Initializable {
 		info[1] = Score.getText();
 		info[0] = HighScore.getText();
 
-		Main.setSaveInfo( info );
+		Main.setSaveInfo( info[5]+ info[6]+ info[7]+ info[8]+ info[9]+ info[10]+info[11]+info[12]+info[13]+info[14]+"\r\n" + 
+				info[15]+info[16]+info[17]+info[18]+info[19]+info[20]+info[21]+info[22]+info[23]+info[24]+"\r\n" + 
+				info[25]+info[26]+info[27]+info[28]+info[29]+info[30]+info[31]+info[32]+info[33]+info[34]+"\r\n" + 
+				info[35]+info[36]+info[37]+info[38]+info[39]+info[40]+info[41]+info[42]+info[43]+info[44]+"\r\n" + 
+				info[45]+info[46]+info[47]+info[48]+info[49]+info[50]+info[51]+info[52]+info[53]+info[54]+"\r\n" + 
+				info[55]+info[56]+info[57]+info[58]+info[59]+info[60]+info[61]+info[62]+info[63]+info[64]+"\r\n" + 
+				info[65]+info[66]+info[67]+info[68]+info[69]+info[70]+info[71]+info[72]+info[73]+info[74]+"\r\n" + 
+				info[75]+info[76]+info[77]+info[78]+info[79]+info[80]+info[81]+info[82]+info[83]+info[84]+"\r\n" + 
+				info[85]+info[86]+info[87]+info[88]+info[89]+info[90]+info[91]+info[92]+info[93]+info[94]+"\r\n" + 
+				info[95]+info[96]+info[97]+info[98]+info[99]+info[100]+info[101]+info[102]+info[103]+info[104]+"\r\n" + 
+				info[2]+" "+info[3]+" "+info[4]+" \r\n" + 
+				info[1]+"\r\n" + 
+				info[0]+"\r\n" + 
+				"" );
 		
 	}
 	
@@ -281,7 +296,7 @@ public class GameController implements Initializable {
 		        
 		        item.getShape().disableDraggable();
 		        
-		        afterShapePlaced( item.getShape() );
+		        afterShapePlaced( item );
 	    	}
 	    	
 	    }
@@ -318,12 +333,12 @@ public class GameController implements Initializable {
 		}
 	}
 	
-	private void afterShapePlaced( PuzzleShape PlacedShape ) {
+	private void afterShapePlaced( PuzzlePiece PlacedPiece ) {
 		
-		int LinesRemoved = removeLines();
+		int LinesRemoved = removeLines( PlacedPiece );
 	    refillDock();
 		
-	    addScore( PlacedShape, LinesRemoved );
+	    addScore( PlacedPiece.getShape(), LinesRemoved );
 	    
 	    saveGameInfo();
 	    
@@ -388,7 +403,7 @@ public class GameController implements Initializable {
 		return !CanPlace;
 	}
 	
-	private int removeLines() {
+	private int removeLines( PuzzlePiece PlacedPiece ) {
 		
 		ObservableList<Node> childrens = Board.getChildren();
 		int PuzzlePiecesRemoved = 0;
@@ -419,7 +434,7 @@ public class GameController implements Initializable {
 			if (removeRow[i]) {
 				for ( Node node : childrens ) {
 		            if ( GridPane.getRowIndex(node) == i ) {
-		            	((PuzzlePiece)((StackPane)node).getChildren().get(0)).remove();
+		            	((PuzzlePiece)((StackPane)node).getChildren().get(0)).remove( PlacedPiece, this, 'x' );
 		            	PuzzlePiecesRemoved++;
 		            }
 				}
@@ -427,7 +442,7 @@ public class GameController implements Initializable {
 			if (removeColumn[i]) {
 				for ( Node node : childrens ) {
 		            if ( GridPane.getColumnIndex(node) == i ) {
-		            	((PuzzlePiece)((StackPane)node).getChildren().get(0)).remove();
+		            	((PuzzlePiece)((StackPane)node).getChildren().get(0)).remove( PlacedPiece, this, 'y' );
 		            	PuzzlePiecesRemoved++;
 		            }
 				}
@@ -435,27 +450,21 @@ public class GameController implements Initializable {
 		}
 		
 		if ( PuzzlePiecesRemoved > 0 ) {
-			new Thread(new Runnable() {
-				// The wrapper thread is unnecessary, unless it blocks on the
-				// Clip finishing; see comments.
-				public void run() {
-					try {
-						Clip clip = AudioSystem.getClip();
-						AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-						Main.class.getResourceAsStream("./..//views/splat.wav"));
-						clip.open(inputStream);
-						clip.start(); 
-					} catch (Exception e) {
-						System.err.println(e.getMessage());
-					}
-				}
-			}).start();
+			try {
+				Clip clip = AudioSystem.getClip();
+				AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+				Main.class.getResourceAsStream("./../views/resources/splat.wav"));
+				clip.open(inputStream);
+				clip.start(); 
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
 		}
 		
 		return PuzzlePiecesRemoved/10;
 		
 	}
-	
+
 	public void addScore( PuzzleShape PlacedShape, int LinesRemoved ) {
 		
 		int ShapeSize = PlacedShape.getNumberOfPuzzlePieces(),
@@ -490,6 +499,32 @@ public class GameController implements Initializable {
 		
 		if ( Integer.parseInt( Score.getText() ) > Integer.parseInt( HighScore.getText() ) ) {
 			HighScore.setText( String.valueOf( Integer.parseInt( Score.getText() ) ) );
+		}
+		
+	}
+	
+	public GridPane getBoard() {
+		return Board;
+	}
+	
+	private boolean validSaveFile() {
+		
+		byte[] encoded;
+		try {
+			encoded = Files.readAllBytes(Paths.get("./src/application/"+Main.getSaveFile()));
+			String FileAsString = new String(encoded, Charset.defaultCharset());
+			
+//x10		..........\r\n
+//			(-?[1-9]\\d*|0) (-?[1-9]\\d*|0) (-?[1-9]\\d*|0) \r\n
+//			\\d+\r\n
+//			\\d+\r\n
+//			
+			return FileAsString.matches("..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n(-?[1-9]\\d*|0) (-?[1-9]\\d*|0) (-?[1-9]\\d*|0) \r\n\\d+\r\n\\d+\r\n");
+			
+		} catch (IOException e) {
+			
+			return false;
+			
 		}
 		
 	}
