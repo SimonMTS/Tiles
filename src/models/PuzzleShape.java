@@ -28,18 +28,21 @@ import javafx.stage.Screen;
 
 public class PuzzleShape {
 
+	private int ShapeNumber;
+	
 	private PuzzlePiece[][] PuzzlePieces = new PuzzlePiece[5][5];
 	
 	public PuzzleShape( GridPane Dock, GameController GameController ) {
 		PuzzleShapeConst( Dock, GameController, new Random().nextInt(19) );
 	}
 	
-	public PuzzleShape( GridPane Dock, GameController GameController, int ShapeNumber ) {
-		PuzzleShapeConst( Dock, GameController, ShapeNumber );
+	public PuzzleShape( GridPane Dock, GameController GameController, int sn ) {
+		PuzzleShapeConst( Dock, GameController, sn );
 	}
 	
-	public void PuzzleShapeConst( GridPane Dock, GameController GameController, int ShapeNumber ) {
+	public void PuzzleShapeConst( GridPane Dock, GameController GameController, int sn ) {
 		
+		ShapeNumber = sn;
 		String Placement = "xxx..xxx..xxx............";
 		
 		try (BufferedReader r = Files.newBufferedReader( Paths.get("./src/application/config.txt"), Charset.defaultCharset() )) {
@@ -60,7 +63,6 @@ public class PuzzleShape {
 		switch ( ShapeNumber ) {
 			case 0:
 				Colr = Color.rgb(122,130,207);
-//				Colr = Color.RED;
 				break;
 			case 1:
 			case 2:
@@ -117,6 +119,11 @@ public class PuzzleShape {
 			}
 		}
 		
+	}
+	
+	public int getShapeNumber() {
+		
+		return ShapeNumber;
 	}
 	
 	public void hide() {

@@ -7,9 +7,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import application.Main;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
@@ -42,10 +44,13 @@ public class GameController implements Initializable {
 	
 	@FXML
 	private GridPane Dock1;
+	private PuzzleShape Dock1Shape;
 	@FXML
 	private GridPane Dock2;
+	private PuzzleShape Dock2Shape;
 	@FXML
 	private GridPane Dock3;
+	private PuzzleShape Dock3Shape;
 	
 	@FXML
 	private Text Score;
@@ -73,16 +78,47 @@ public class GameController implements Initializable {
 			        Placements[i] = it.next();
 			    }
 			    
+			    String alphabet = "abcdefghijklmnopqrstuvwxyz";
+			    String[] SavedRow;
+			    for ( int i=0;i<10;i++ ) {
+			    	SavedRow = Placements[i].split("");
+			    	
+			    	for ( int j=0;j<10;j++ ) {
+			    		if ( !SavedRow[j].equals(".") ) {
+			    			
+			    			ObservableList<Node> childrens = Board.getChildren();
+				    		for ( Node node : childrens ) {
+				    			if ( GridPane.getRowIndex(node) == i && GridPane.getColumnIndex(node) == j ) {
+				    				
+				    				((StackPane)node).getChildren().add( new PuzzlePiece( alphabet.indexOf(SavedRow[j].charAt(0)) ) );
+				    				
+				    			}
+				    		}
+				    		
+			    		}
+			    	}
+			    }
 			    
-			    new PuzzleShape( Dock1, this, Integer.parseInt( Placements[10].split(" ")[0] ) );
-				new PuzzleShape( Dock2, this, Integer.parseInt( Placements[10].split(" ")[1] ) );
-				new PuzzleShape( Dock3, this, Integer.parseInt( Placements[10].split(" ")[2] ) );
+			    
+			    String[] DockStorage = Placements[10].split(" ");
+			    
+			    if ( Integer.parseInt(DockStorage[0]) >= 0 ) {
+			    	Dock1Shape = new PuzzleShape( Dock1, this, Integer.parseInt(DockStorage[0]) );
+			    }
+			    
+			    if ( Integer.parseInt(DockStorage[1]) >= 0 ) {
+			    	Dock2Shape = new PuzzleShape( Dock2, this, Integer.parseInt(DockStorage[1]) );
+			    }
+			    
+			    if ( Integer.parseInt(DockStorage[2]) >= 0 ) {
+			    	Dock3Shape = new PuzzleShape( Dock3, this, Integer.parseInt(DockStorage[2]) );
+			    }
 			    
 			    Score.setText( Placements[11] );
 			    HighScore.setText( Placements[12] );
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("err");
 			}
 			
 		} else {
@@ -93,30 +129,58 @@ public class GameController implements Initializable {
 			
 		}
 		
+		saveGameInfo();
+		
 	}
 	
-	public int[] getSaveGameInfo() {
-		int[] info = new int[2];
-//		System.out.println( Score.getText() );
-//		info[0] = Integer.parseInt( Score.getText() );
-//		info[1] = Integer.parseInt( HighScore.getText() );
-		info[0] = 0;
-		info[1] = 1589;
+	public void saveGameInfo() {
+		String[] info = new String[105];
 		
-		return info;
+		int i = 5;
+		ObservableList<Node> childrens = Board.getChildren();
+		for ( Node node : childrens ) {
+            
+        	if ( ((StackPane)node).getChildren().isEmpty() ) {
+        		info[ i ] = ".";
+        	} else {
+        		info[ i ] = ((PuzzlePiece) ((StackPane)node).getChildren().get(0)).getColorChar();
+        	}
+        	
+        	i++;
+    	}
+
+		if ( !Dock3.getChildren().isEmpty() ) {
+			info[4] = String.valueOf(Dock3Shape.getShapeNumber());
+		} else {
+			info[4] = String.valueOf(-1);
+		}
+		
+		if ( !Dock2.getChildren().isEmpty() ) {
+			info[3] = String.valueOf(Dock2Shape.getShapeNumber());
+		} else {
+			info[3] = String.valueOf(-1);
+		}
+		
+		if ( !Dock1.getChildren().isEmpty() ) {
+			info[2] = String.valueOf(Dock1Shape.getShapeNumber());
+		} else {
+			info[2] = String.valueOf(-1);
+		}
+		
+		info[1] = Score.getText();
+		info[0] = HighScore.getText();
+
+		Main.setSaveInfo( info );
+		
 	}
 	
 	@FXML
 	public void onMenuClick( ActionEvent event ) {
 		ScoreText.setText( String.valueOf( Integer.parseInt( Score.getText() ) ) );
 		
-		if ( true ) {
-			ScoreTypeText.setText( "No moves left" );
-		} else {
-			ScoreTypeText.setText( "You surrendered" );
-		}
+		ScoreTypeText.setText( "You surrendered" );
 		
-		if ( true ) {
+		if ( Integer.parseInt( Score.getText() ) == Integer.parseInt( HighScore.getText() )  ) {
 			HighScoreImg.setOpacity(1);
 		} else {
 			HighScoreImg.setOpacity(0);
@@ -128,6 +192,32 @@ public class GameController implements Initializable {
 	@FXML
 	public void onContinueClick( ActionEvent event ) {
 		MenuPane.setTranslateY(700);
+	}
+	
+	@FXML
+	public void onRestartClick( ActionEvent event ) {
+		
+		// clear board
+		ObservableList<Node> childrens = Board.getChildren();
+		for ( Node node : childrens ) {
+			((StackPane)node).getChildren().clear();
+		}
+		
+		// clear dock
+		Dock1.getChildren().clear();
+		Dock2.getChildren().clear();
+		Dock3.getChildren().clear();
+		
+		// refill dock
+		refillDock();
+		
+		// set score to zero
+		Score.setText( "0" );
+		
+		saveGameInfo();
+		
+		MenuPane.setTranslateY(700);
+		
 	}
 	
 	@FXML
@@ -190,7 +280,19 @@ public class GameController implements Initializable {
 	    event.consume();
 	    
 	    if ( hasLost() ) {
-	    	System.out.println("u lose");
+
+	    	ScoreText.setText( String.valueOf( Integer.parseInt( Score.getText() ) ) );
+			
+			ScoreTypeText.setText( "No moves left" );
+			
+			if ( Integer.parseInt( Score.getText() ) == Integer.parseInt( HighScore.getText() )  ) {
+				HighScoreImg.setOpacity(1);
+			} else {
+				HighScoreImg.setOpacity(0);
+			}
+			
+			MenuPane.setTranslateY(0);
+	    	
 	    }
 	}
 	
@@ -211,15 +313,17 @@ public class GameController implements Initializable {
 		
 	    addScore( PlacedShape, LinesRemoved );
 	    
+	    saveGameInfo();
+	    
 	}
 	
 	private void refillDock() {
 		
 		if ( Dock1.getChildren().isEmpty() && Dock2.getChildren().isEmpty() && Dock3.getChildren().isEmpty() ) {
 
-			new PuzzleShape( Dock1, this );
-			new PuzzleShape( Dock2, this );
-			new PuzzleShape( Dock3, this );
+			Dock1Shape = new PuzzleShape( Dock1, this );
+			Dock2Shape = new PuzzleShape( Dock2, this );
+			Dock3Shape = new PuzzleShape( Dock3, this );
 			
 		}
 		
