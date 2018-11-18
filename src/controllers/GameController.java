@@ -519,7 +519,7 @@ public class GameController implements Initializable {
 //			\\d+\r\n
 //			\\d+\r\n
 //			
-			return FileAsString.matches("..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n..........\r\n(-?[1-9]\\d*|0) (-?[1-9]\\d*|0) (-?[1-9]\\d*|0) \r\n\\d+\r\n\\d+\r\n");
+			return FileAsString.matches("(..........\r\n)*(-?[1-9]\\d*|0) (-?[1-9]\\d*|0) (-?[1-9]\\d*|0) \r\n\\d+\r\n\\d+\r\n");
 			
 		} catch (IOException e) {
 			
