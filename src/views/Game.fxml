@@ -257,7 +257,7 @@
                   </ImageView>
                </children>
             </GridPane>
-            <Button layoutX="25.0" layoutY="325.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onContinueClick" prefHeight="175.0" prefWidth="175.0" styleClass="continuebtn">
+            <Button fx:id="ContinueBtn" layoutX="25.0" layoutY="325.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onContinueClick" prefHeight="175.0" prefWidth="175.0" styleClass="continuebtn">
                <graphic>
                   <ImageView fitHeight="175.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true" scaleX="0.5" scaleY="0.5">
                      <image>

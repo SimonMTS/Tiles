@@ -3,11 +3,16 @@ package models;
 import java.util.UUID;
 
 import controllers.GameController;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 public class PuzzlePiece extends Rectangle {
 
@@ -138,4 +143,26 @@ public class PuzzlePiece extends Rectangle {
 		
 	}
 	
+	public void remove() {
+		
+		this.setHeight(40);
+		this.setWidth(40);
+		
+		KeyValue HeightValue = new KeyValue(this.heightProperty(), 0);
+        KeyFrame HeightFrame = new KeyFrame(Duration.millis(100), HeightValue);
+        Timeline HeightTimeline = new Timeline(HeightFrame);
+		
+		KeyValue widthValue = new KeyValue(this.widthProperty(), 0);
+        KeyFrame WidthFrame = new KeyFrame(Duration.millis(100), widthValue);
+        Timeline WidthTimeline = new Timeline(WidthFrame);
+        
+        WidthTimeline.setOnFinished(event -> {
+
+        	((StackPane)this.getParent()).getChildren().remove(this);
+        	
+    	});
+        WidthTimeline.play();
+        HeightTimeline.play();
+		
+	}
 }

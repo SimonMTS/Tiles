@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import application.Main;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
@@ -21,6 +25,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
@@ -65,6 +70,9 @@ public class GameController implements Initializable {
 	private Text ScoreTypeText;
 	@FXML
 	private ImageView HighScoreImg;
+	
+	@FXML
+	private Button ContinueBtn;
 	
 	public void initialize( URL arg0, ResourceBundle arg1 ) {
 		
@@ -218,6 +226,8 @@ public class GameController implements Initializable {
 		
 		MenuPane.setTranslateY(700);
 		
+		ContinueBtn.setDisable(false);
+		
 	}
 	
 	@FXML
@@ -284,6 +294,8 @@ public class GameController implements Initializable {
 	    	ScoreText.setText( String.valueOf( Integer.parseInt( Score.getText() ) ) );
 			
 			ScoreTypeText.setText( "No moves left" );
+			
+			ContinueBtn.setDisable(true);
 			
 			if ( Integer.parseInt( Score.getText() ) == Integer.parseInt( HighScore.getText() )  ) {
 				HighScoreImg.setOpacity(1);
@@ -407,7 +419,7 @@ public class GameController implements Initializable {
 			if (removeRow[i]) {
 				for ( Node node : childrens ) {
 		            if ( GridPane.getRowIndex(node) == i ) {
-		            	((StackPane)node).getChildren().clear();
+		            	((PuzzlePiece)((StackPane)node).getChildren().get(0)).remove();
 		            	PuzzlePiecesRemoved++;
 		            }
 				}
@@ -415,11 +427,29 @@ public class GameController implements Initializable {
 			if (removeColumn[i]) {
 				for ( Node node : childrens ) {
 		            if ( GridPane.getColumnIndex(node) == i ) {
-		            	((StackPane)node).getChildren().clear();
+		            	((PuzzlePiece)((StackPane)node).getChildren().get(0)).remove();
 		            	PuzzlePiecesRemoved++;
 		            }
 				}
 			}
+		}
+		
+		if ( PuzzlePiecesRemoved > 0 ) {
+			new Thread(new Runnable() {
+				// The wrapper thread is unnecessary, unless it blocks on the
+				// Clip finishing; see comments.
+				public void run() {
+					try {
+						Clip clip = AudioSystem.getClip();
+						AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+						Main.class.getResourceAsStream("./..//views/splat.wav"));
+						clip.open(inputStream);
+						clip.start(); 
+					} catch (Exception e) {
+						System.err.println(e.getMessage());
+					}
+				}
+			}).start();
 		}
 		
 		return PuzzlePiecesRemoved/10;

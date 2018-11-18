@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 import controllers.GameController;
+import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -24,7 +25,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 public class PuzzleShape {
 
@@ -118,6 +121,21 @@ public class PuzzleShape {
 			    Cplacement++;
 			}
 		}
+		
+		for (int i=0; i<5; i++) {
+	        for (int j=0; j<5; j++) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+
+	            	Translate TranslateDown = new Translate(0, 300);
+		        	PuzzlePieces[i][j].getTransforms().addAll(TranslateDown);
+		        	
+		        	TranslateTransition tt = new TranslateTransition(Duration.millis(200), PuzzlePieces[i][j]);
+	            	tt.setByY(-300);
+	                tt.play();
+		        	
+	            }
+	        }
+	    }
 		
 	}
 	
