@@ -35,7 +35,7 @@ import views.PuzzlePieceView;
 import views.PuzzleShapeView;
 import models.Game;
 
-public class GameController implements Initializable {
+public class GameController {
 	
 	private Game Game = new Game();
 	
@@ -70,7 +70,7 @@ public class GameController implements Initializable {
 	private Button ContinueBtn;
 	
 	
-	public void initialize( URL arg0, ResourceBundle arg1 ) {
+	public void initialize() {
 		
 		if ( Game.validSaveFile() ) {
 			
@@ -153,6 +153,31 @@ public class GameController implements Initializable {
 		}
 		
 		Game.saveInfo();
+		
+		new java.util.Timer().schedule( 
+		    new java.util.TimerTask() {
+		        @Override
+		        public void run() {
+		        	if ( hasLost() ) {
+
+		    	    	ScoreText.setText( String.valueOf( Integer.parseInt( Score.getText() ) ) );
+		    			
+		    			ScoreTypeText.setText( "No moves left" );
+		    			
+		    			ContinueBtn.setDisable(true);
+		    			
+		    			if ( Integer.parseInt( Score.getText() ) == Integer.parseInt( HighScore.getText() )  ) {
+		    				HighScoreImg.setOpacity(1);
+		    			} else {
+		    				HighScoreImg.setOpacity(0);
+		    			}
+		    			
+		    			MenuPane.setTranslateY(0);
+		    	    	
+		    	    }
+		        }
+		    }, 100
+		);
 		
 	}
 	
