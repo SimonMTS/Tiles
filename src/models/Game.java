@@ -88,7 +88,7 @@ public class Game {
 //			\\d+\r\n
 //			\\d+\r\n
 //			
-			return FileAsString.matches("((([A-Sa-s]|\\.){10})\r\n){10}(-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) \r\n\\d+\r\n\\d+\r\n");
+			return FileAsString.matches("((([A-Sa-s]|\\.){10})((\r\n)|\n)){10}(-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) ((\\r\\n)|\\n)\\d+((\\r\\n)|\\n)\\d+((\\r\\n)|\\n)");
 			
 		} catch (IOException e) {
 			
