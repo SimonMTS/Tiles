@@ -172,6 +172,20 @@ public class GameController implements Initializable {
 	}
 	
 	@FXML
+	public void onCheatClick( ActionEvent event ) {
+
+		Score.setText( "0" );
+		Game.setScore(0);
+		
+		Dock1.getChildren().clear();
+		Dock2.getChildren().clear();
+		Dock3.getChildren().clear();
+		
+		refillDock();
+		
+	}
+	
+	@FXML
 	public void onContinueClick( ActionEvent event ) {
 		MenuPane.setTranslateY(700);
 	}

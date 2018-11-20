@@ -71,7 +71,7 @@ public class Game {
 		
 		SaveFile += Score+"\r\n" + HighScore+"\r\n";
 		
-		System.out.println( SaveFile );
+		
 		Main.setSaveInfo( SaveFile );
 		
 	}

@@ -21,6 +21,15 @@
     -fx-background-color: #9CCC65;
 }
 
+.cheatbtn {
+	-fx-background-color: #F44336;
+	-fx-cursor: HAND;
+	-fx-background-radius: 5;
+	-fx-font-weight: bold;
+}
+.cheatbtn:hover {
+    -fx-background-color: #EF5350;
+}
 
 .restartbtn {
 	-fx-background-color: #FF9800;

@@ -25,6 +25,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
+            <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onCheatClick" prefHeight="25.0" prefWidth="25.0" styleClass="cheatbtn" text="C" textFill="WHITE" GridPane.valignment="TOP" />
             <Text fx:id="Score" fill="#98dc55" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.halignment="RIGHT">
                <font>
                   <Font size="30.0" />
