@@ -83,12 +83,12 @@ public class Game {
 			encoded = Files.readAllBytes(Paths.get("./src/application/"+Main.getSaveFile()));
 			String FileAsString = new String(encoded, Charset.defaultCharset());
 			
-//			((([a-s]|\\.){10})\r\n){10})\r\n){10}
+//			((([A-Sa-s]|\\.){10})\r\n){10})\r\n){10}
 //			(-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) \r\n
 //			\\d+\r\n
 //			\\d+\r\n
 //			
-			return FileAsString.matches("((([a-s]|\\.){10})\r\n){10}(-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) \r\n\\d+\r\n\\d+\r\n");
+			return FileAsString.matches("((([A-Sa-s]|\\.){10})\r\n){10}(-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) (-?[1-9]([0-8]|)|0) \r\n\\d+\r\n\\d+\r\n");
 			
 		} catch (IOException e) {
 			
