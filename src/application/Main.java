@@ -25,7 +25,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		
-		primaryStage.setTitle("Tiles");
+		primaryStage.setTitle("Tiles - Simon Striekwold");
         
 		FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("./../views/resources/Game.fxml"));
@@ -46,7 +46,7 @@ public class Main extends Application {
                 writer.close();
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Couldn't save game.");
 			}
             
             System.exit(0);

@@ -1,21 +1,17 @@
 package views;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.stream.Stream;
 
 import controllers.GameController;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
@@ -29,17 +25,17 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import javafx.util.Duration;
 
-public class PuzzleShape {
+public class PuzzleShapeView {
 
 	private int ShapeNumber;
 	
-	private PuzzlePiece[][] PuzzlePieces = new PuzzlePiece[5][5];
+	private PuzzlePieceView[][] PuzzlePieces = new PuzzlePieceView[5][5];
 	
-	public PuzzleShape( GridPane Dock, GameController GameController ) {
+	public PuzzleShapeView( GridPane Dock, GameController GameController ) {
 		PuzzleShapeConst( Dock, GameController, new Random().nextInt(19) );
 	}
 	
-	public PuzzleShape( GridPane Dock, GameController GameController, int sn ) {
+	public PuzzleShapeView( GridPane Dock, GameController GameController, int sn ) {
 		PuzzleShapeConst( Dock, GameController, sn );
 	}
 	
@@ -113,7 +109,7 @@ public class PuzzleShape {
 			    char c = Placement.charAt(Cplacement);
 			    
 			    if ( c == 'x' ) {
-			    	PuzzlePieces[i][j] = new PuzzlePiece(GameController, this, j, i, Colr);
+			    	PuzzlePieces[i][j] = new PuzzlePieceView(GameController, this, j, i, Colr);
 			    	
 			    	Dock.add(PuzzlePieces[i][j], j, i);
 			    }
@@ -124,7 +120,7 @@ public class PuzzleShape {
 		
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 
 	            	Translate TranslateDown = new Translate(0, 300);
 		        	PuzzlePieces[i][j].getTransforms().addAll(TranslateDown);
@@ -138,7 +134,7 @@ public class PuzzleShape {
 	    }
 		
 	}
-	
+			
 	public int getShapeNumber() {
 		
 		return ShapeNumber;
@@ -147,7 +143,7 @@ public class PuzzleShape {
 	public void hide() {
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 
 		        	PuzzlePieces[i][j].setWidth(0);
 		        	PuzzlePieces[i][j].setHeight(0);
@@ -160,7 +156,7 @@ public class PuzzleShape {
 	public void show() {
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 
 		        	PuzzlePieces[i][j].setWidth(35);
 		        	PuzzlePieces[i][j].setHeight(35);
@@ -170,16 +166,19 @@ public class PuzzleShape {
 	    }
 	}
 	
-	public void movePieces( DragEvent event ) {
+	public boolean[][] movePieces( DragEvent event ) {
 		GridPane Board = (GridPane) ((StackPane) event.getTarget()).getParent();
+		boolean[][] PlacedPieces = new boolean[10][10];
 		
-    	PuzzlePiece DraggedItem = (PuzzlePiece) ((Node) event.getTarget()).getScene().lookup( "#"+event.getDragboard().getString() );
+    	PuzzlePieceView DraggedItem = (PuzzlePieceView) ((Node) event.getTarget()).getScene().lookup( "#"+event.getDragboard().getString() );
     	int RowOfOriginallyDraggedItem = GridPane.getRowIndex(DraggedItem.getParent());
     	int ColumnOfOriginallyDraggedItem = GridPane.getColumnIndex(DraggedItem.getParent());
 
+    	PlacedPieces[RowOfOriginallyDraggedItem][ColumnOfOriginallyDraggedItem] = true;
+    	
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 	            	
 	            	int XPosOfThisItemOnBoard = RowOfOriginallyDraggedItem + (i - DraggedItem.getYpos());
 	            	int YPosOfThisItemOnBoard = ColumnOfOriginallyDraggedItem + (j - DraggedItem.getXpos());
@@ -197,6 +196,7 @@ public class PuzzleShape {
         	            	)
         	            ) {
         	            	((StackPane)node).getChildren().add( PuzzlePieces[i][j] );
+        	            	PlacedPieces[XPosOfThisItemOnBoard][YPosOfThisItemOnBoard] = true;
         	                break;
         	            }
         	        }
@@ -204,13 +204,16 @@ public class PuzzleShape {
 	            }
 	        }
 	    }
+		
+		return PlacedPieces;
+		
 	}
 	
 	public void disableDraggable() {
 		
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 	            	
 	            	PuzzlePieces[i][j].setOnDragDetected(new EventHandler <MouseEvent>() {
 
@@ -242,13 +245,13 @@ public class PuzzleShape {
 		
 		GridPane Board = (GridPane) sp.getParent();
 		
-    	PuzzlePiece DraggedItem = (PuzzlePiece) ((Node) sp).getScene().lookup( "#"+PuzzleId );
+    	PuzzlePieceView DraggedItem = (PuzzlePieceView) ((Node) sp).getScene().lookup( "#"+PuzzleId );
     	int RowOfOriginallyDraggedItem = GridPane.getRowIndex((Node) sp);
     	int ColumnOfOriginallyDraggedItem = GridPane.getColumnIndex((Node) sp);
 
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 	            	
 	            	int XPosOfThisItemOnBoard = RowOfOriginallyDraggedItem + (i - DraggedItem.getYpos());
 	            	int YPosOfThisItemOnBoard = ColumnOfOriginallyDraggedItem + (j - DraggedItem.getXpos());
@@ -292,7 +295,7 @@ public class PuzzleShape {
 		
 		for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 	            	NumberOfPuzzlePieces++;
 	            }
 	        }
@@ -315,7 +318,7 @@ public class PuzzleShape {
         
         for (int i=0; i<5; i++) {
 	        for (int j=0; j<5; j++) {
-	            if ( PuzzlePieces[i][j] instanceof PuzzlePiece ) {
+	            if ( PuzzlePieces[i][j] instanceof PuzzlePieceView ) {
 	            	
 	            	SnapShot = PuzzlePieces[i][j].getParent().snapshot(SnapShotParams, null);break;
 	            	

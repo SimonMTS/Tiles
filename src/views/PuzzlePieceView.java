@@ -3,13 +3,10 @@ package views;
 import java.util.UUID;
 
 import controllers.GameController;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -22,15 +19,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class PuzzlePiece extends Rectangle {
+public class PuzzlePieceView extends Rectangle {
 
-	private PuzzleShape PuzzleShape;
+	private PuzzleShapeView PuzzleShape;
 	private int SoloPieceColor = -10;
 	
 	private int PuzzleShapeX;
 	private int PuzzleShapeY;
 	
-	public PuzzlePiece( int ColorInt ) {
+	public PuzzlePieceView( int ColorInt ) {
 		super(35, 35);
 		
 		SoloPieceColor = ColorInt;
@@ -86,7 +83,7 @@ public class PuzzlePiece extends Rectangle {
 		
 	}
 	
-	public PuzzlePiece( GameController GameController, PuzzleShape ps, int Xpos, int Ypos, Color Color ) {
+	public PuzzlePieceView( GameController GameController, PuzzleShapeView ps, int Xpos, int Ypos, Color Color ) {
 		super(35, 35);
 		
 		PuzzleShape = ps;
@@ -124,7 +121,7 @@ public class PuzzlePiece extends Rectangle {
 		
 	}
 	
-	public PuzzleShape getShape() {
+	public PuzzleShapeView getShape() {
 		return PuzzleShape; 
 	}
 	
@@ -134,6 +131,40 @@ public class PuzzlePiece extends Rectangle {
 	
 	public int getYpos() {
 		return PuzzleShapeY;
+	}
+	
+	public int getGridX( GameController GameController ) {
+		ObservableList<Node> childrens = GameController.getBoard().getChildren();
+	    for ( int i=0;i<10;i++ ) {
+	    	for ( int j=0;j<10;j++ ) {
+	    		for ( Node node : childrens ) {
+	    			if ( this.getParent() == node && GridPane.getRowIndex(node) == i && GridPane.getColumnIndex(node) == j ) {
+	    				
+	    				return j;
+	    				
+	    			}
+	    		}		
+	    	}
+	    }
+	    
+	    return 0;
+	}
+	
+	public int getGridY( GameController GameController ) {
+		ObservableList<Node> childrens = GameController.getBoard().getChildren();
+	    for ( int i=0;i<10;i++ ) {
+	    	for ( int j=0;j<10;j++ ) {
+	    		for ( Node node : childrens ) {
+	    			if ( this.getParent() == node && GridPane.getRowIndex(node) == i && GridPane.getColumnIndex(node) == j ) {
+	    				
+	    				return i;
+	    				
+	    			}
+	    		}		
+	    	}
+	    }
+	    
+	    return 0;
 	}
 	
 	public String getColorChar() {
@@ -151,26 +182,16 @@ public class PuzzlePiece extends Rectangle {
 		
 	}
 	
-	public void remove( PuzzlePiece PlacedPiece, GameController GameController, char Direction ) {
+	public void remove( PuzzlePieceView PlacedPiece, GameController GameController, char Direction ) {
 		
-		int PlacedPos = 0;
+		int PlacedPos;
+		if ( Direction == 'y' ) {
+			PlacedPos = PlacedPiece.getGridY( GameController );
+		} else {
+			PlacedPos = PlacedPiece.getGridX( GameController );
+		}
+		
 		ObservableList<Node> childrens = GameController.getBoard().getChildren();
-	    for ( int i=0;i<10;i++ ) {
-	    	for ( int j=0;j<10;j++ ) {
-	    		for ( Node node : childrens ) {
-	    			if ( PlacedPiece.getParent() == node && GridPane.getRowIndex(node) == i && GridPane.getColumnIndex(node) == j ) {
-	    				
-	    				if ( Direction == 'y' ) {
-	    					PlacedPos = i;
-	    				} else {
-	    					PlacedPos = j;
-	    				}
-	    				
-	    			}
-	    		}		
-	    	}
-	    }
-
 		int MyPos = 0;
 	    for ( int i=0;i<10;i++ ) {
 	    	for ( int j=0;j<10;j++ ) {
@@ -210,7 +231,7 @@ public class PuzzlePiece extends Rectangle {
         	
         	((StackPane)this.getParent()).getChildren().remove(this);
         	
-        	GameController.saveGameInfo();
+        	GameController.SaveGameInfo();
         	
     	});
 		
