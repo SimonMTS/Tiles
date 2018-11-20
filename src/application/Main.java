@@ -15,9 +15,9 @@ import javafx.scene.layout.AnchorPane;
 public class Main extends Application {
 	private static String SaveInfo;
 	
-//	private static String SaveFile = "savegame.txt";
+	private static String SaveFile = "savegame.txt";
 //	private static String SaveFile = "cheatmode1.txt";
-	private static String SaveFile = "cheatmode2.txt";
+//	private static String SaveFile = "cheatmode2.txt";
 	
 	
 	@Override
